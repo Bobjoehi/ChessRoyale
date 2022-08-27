@@ -11,12 +11,18 @@ const EMPTY = 0;
 const WHITE = 'w';
 const BLACK = 'b';
 
-let board = setBoard();
+const MAX_ELIXIR = 10;
 
+
+let board = setBoard();
 // indicates whether a piece is selected
-let selected = false;
+let selected = null;
+let curPieceMoves = [];
 // indicates the current player
 let playerColor = 'w';
+// the amount of exilir this player currently has
+let curExilir = 0;
+
 
 // initializes the starting board
 function setBoard() {
@@ -78,38 +84,6 @@ function createEmptyRow() {
     return emptyRow
 }
 
-
-// TODO: selection checks
-function movePiece(row, col) {
-    let piece = board[row][col];
-    if (piece.color === playerColor) {
-        selected = true;
-        // finds possible moves based on piece type
-        let moves;
-        switch (piece.id) {
-            case 1:
-                moves = pawnMoves(row, col);
-                break;
-            case 2:
-                moves = rookMoves(row, col);
-                break;
-            case 3:
-                moves = kinghtMoves(row, col);
-                break;
-            case 4:
-                moves = bishopMoves(row, col);
-                break;
-            case 5:
-                moves = queenMoves(row, col);
-                break;
-            case 6:
-                moves = kingMoves(row, col);
-        // do something with list of legal moves
-        }
-    } else {
-        // you cant do that >:(
-    }
-}
 
 // pawn movements
 // TODO: 2 square jump and en passant not implemented
@@ -188,8 +162,7 @@ function rookMoves(row, col) {
 }
 
 // TODO: knight movements
-// untested
-function kinghtMoves(row, col) {
+function knightMoves(row, col) {
     let piece = board[row][col];
     let validMoves = [];
     // all the possible places a knight could go
@@ -245,7 +218,6 @@ function queenMoves(row, col) {
 }
 
 // TODO: king movements
-// untested
 function kingMoves(row, col) {
     let piece = board[row][col];
     let validMoves = [];
@@ -268,4 +240,89 @@ function kingMoves(row, col) {
         }
     }
     return validMoves;
+}
+
+// functions that interact with HTML
+
+// converts row and col to chess board coordinate
+// each td's id should be its board coordinate
+function rowcolToCoord(row, col) {
+    let rowCoord = String(8 - row);
+    let colCoord = String.fromCharCode(97 + col);
+    let coord = colCoord + rowCoord;
+    return coord;
+}
+
+// a square has been selected (each td's onclick event)
+function squareSelected(row, col) {
+    if (!selected) {
+        pickUpPiece(row, col);
+    } else {
+        movePiece(row, col);
+    }
+}
+// selection checks
+function pickUpPiece(row, col) {
+    let piece = board[row][col];
+    if (piece.color === playerColor) {
+        selected = [row, col];
+        // finds possible moves based on piece type
+        switch (piece.id) {
+            case 1:
+                curPieceMoves = pawnMoves(row, col);
+                break;
+            case 2:
+                curPieceMoves = rookMoves(row, col);
+                break;
+            case 3:
+                curPieceMoves = knightMoves(row, col);
+                break;
+            case 4:
+                curPieceMoves = bishopMoves(row, col);
+                break;
+            case 5:
+                curPieceMoves = queenMoves(row, col);
+                break;
+            case 6:
+                curPieceMoves = kingMoves(row, col);
+        // TODO: do something with list of legal moves
+        // like highlight all the squares that the piece can move to
+        }
+    }
+    // else you cant pick up the piece, do nothing
+}
+
+// TODO: highlights all possible moves the selected piece can make on HTML
+function highlightMoves(validMoves) {
+    for (coord of validMoves) {
+        let squareID = rowcolToCoord(coord[0], coord[1]);
+        let square = document.getElementById(squareID);
+        // idk what now
+    }
+}
+
+// checks if the selected square is a valid move
+// should only be called if a piece is already selected
+// TODO: also must make changes to the HTML
+function movePiece(row, col) {
+    // if input is the same as the selected piece's coords, deselect piece
+    if (selected[0] === row && selected[1] === col) {
+        selected = null;
+        curPieceMoves = [];
+    }
+    // check if the input is a valid move
+    for (coord of curPieceMoves) {
+        if (coord[0] === row && coord[1] === col) {
+            // move is valid, move piece
+            let piece = board[seleced[0]][selected[1]];
+            board[row][col] = piece;
+            board[seleced[0]][selected[1]] = {color: "e", id: 0};
+            // no piece is selected, reset info
+            selected = null;
+            curPieceMoves = [];
+            // change piece pictures and unhighlight all squares
+            return;
+        }
+    }
+    // not a valid move, do nothing
 }
