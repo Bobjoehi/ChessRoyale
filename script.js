@@ -18,9 +18,8 @@ let selected = false;
 // indicates the current player
 let playerColor = 'w';
 
-
+// initializes the starting board
 function setBoard() {
-    // this sucks i hate javascript
     let board = [
         createBackRow('b'),
         createPawnRow('b'),
@@ -30,7 +29,7 @@ function setBoard() {
         createEmptyRow(),
         createPawnRow('w'),
         createBackRow('w')
-    ]
+    ];
     return board
 }
 
@@ -45,7 +44,7 @@ function createBackRow(pieceColor) {
         {color: pieceColor, id: 4},
         {color: pieceColor, id: 3},
         {color: pieceColor, id: 2}
-    ]
+    ];
     return backRow
 }
 
@@ -60,7 +59,7 @@ function createPawnRow(pieceColor) {
         {color: pieceColor, id: 1},
         {color: pieceColor, id: 1},
         {color: pieceColor, id: 1}
-    ]
+    ];
     return pawnRow
 }
 
@@ -75,14 +74,15 @@ function createEmptyRow() {
         {color: 'e', id: 0},
         {color: 'e', id: 0},
         {color: 'e', id: 0},
-    ]
+    ];
     return emptyRow
 }
 
 
-// selection checks
+// TODO: selection checks
 function checkPieceSide(piece) {
     if (piece.color === playerColor) {
+        selected = true;
         // valid selection
     } else {
         // you cant do that >:(
@@ -90,6 +90,7 @@ function checkPieceSide(piece) {
 }
 
 // pawn movements
+// TODO: 2 square jump and en passant not implemented
 function pawnMoves(row, col) {
     let piece = board[row][col];
     let validMoves = [];
@@ -121,16 +122,73 @@ function pawnMoves(row, col) {
     return validMoves;
 }
 
-// rook movements
+// TODO: rook movements
+function rookMoves(row, col) {
+    let piece = board[row][col];
+    let validMoves = [];
+    let i = 1;
+    // check upward movement
+    while (row-i >= 0 && board[row-i][col].color !== piece.color) {
+        validMoves.push([row-i, col]);
+        if (board[row-i][col].color !== 'e') {break;}
+        i += 1;
+    }
+    // check downward movement
+    i = 1;
+    while (row+i < 8 && board[row+i][col].color !== piece.color) {
+        validMoves.push([row+i, col]);
+        if (board[row+i][col].color !== 'e') {break;}
+        i += 1;
+    }
+    // check leftward movement
+    i = 1;
+    while (col-i >= 0 && board[row][col-i].color !== piece.color) {
+        validMoves.push([row, col-i]);
+        if (board[row][col-i].color !== 'e') {break;}
+        i += 1;
+    }
+    // check rightward movement
+    i = 1;
+    while (col+i < 8 && board[row][col+i].color !== piece.color) {
+        validMoves.push([row, col+i]);
+        if (board[row][col+i].color !== 'e') {break;}
+        i += 1;
+    }
+    return validMoves;
+}
+
+// TODO: knight movements
 
 
-// knight movements
+// TODO: bishop movements
+function bishopMoves(row, col) {
+    let piece = board[row][col];
+    let validMoves = [];
+    let diagonals = [
+        [1, 1],
+        [-1, 1],
+        [1, -1],
+        [-1, -1]
+    ];
+    // goes through the 4 diagonal directions
+    for (dir of diagonals) {
+        let curRow = row + dir[0];
+        let curCol = col + dir[1];
+        while (0 <= curRow && curRow < 8 && 0 <= curCol && curCol < 8 &&
+               board[curRow][curCol].color !== piece.color) {
+            validMoves.push([curRow, curCol]);
+            if (board[curRow][curCol].color !== 'e') {break;}
+            curRow += dir[0];
+            curCol += dir[1];
+        }
+    }
+    return validMoves;
+}
 
+// TODO: queen movements
+function queenMoves(row, col) {
+    let validMoves = rookMoves(row, col).concat(bishopMoves(row, col));
+    return validMoves;
+}
 
-// bishop movements
-
-
-// queen movements
-
-
-// king movements
+// TODO: king movements
