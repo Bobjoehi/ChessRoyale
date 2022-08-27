@@ -51,14 +51,14 @@ function createBackRow(pieceColor) {
 // creates a row containing only pawn pieces
 function createPawnRow(pieceColor) {
     let pawnRow = [
-        {color: pieceColor, id: 1},
-        {color: pieceColor, id: 1},
-        {color: pieceColor, id: 1},
-        {color: pieceColor, id: 1},
-        {color: pieceColor, id: 1},
-        {color: pieceColor, id: 1},
-        {color: pieceColor, id: 1},
-        {color: pieceColor, id: 1}
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true}
     ];
     return pawnRow
 }
@@ -80,10 +80,32 @@ function createEmptyRow() {
 
 
 // TODO: selection checks
-function checkPieceSide(piece) {
+function movePiece(row, col) {
+    let piece = board[row][col];
     if (piece.color === playerColor) {
         selected = true;
-        // valid selection
+        // finds possible moves based on piece type
+        let moves;
+        switch (piece.id) {
+            case 1:
+                moves = pawnMoves(row, col);
+                break;
+            case 2:
+                moves = rookMoves(row, col);
+                break;
+            case 3:
+                moves = kinghtMoves(row, col);
+                break;
+            case 4:
+                moves = bishopMoves(row, col);
+                break;
+            case 5:
+                moves = queenMoves(row, col);
+                break;
+            case 6:
+                moves = kingMoves(row, col);
+        // do something with list of legal moves
+        }
     } else {
         // you cant do that >:(
     }
@@ -98,6 +120,10 @@ function pawnMoves(row, col) {
         // piece is white and moves up, row-1
         if (board[row-1][col].color === 'e') {
             validMoves.push([row-1, col]);
+            // 2 square jump
+            if (piece.firstMove && board[row-2][col].color === 'e') {
+                validMoves.push([row-2, col]);
+            }
         }
         // checks if any piece can be captured
         if (col !== 0 && board[row-1][col-1].color === 'b') {
@@ -110,6 +136,10 @@ function pawnMoves(row, col) {
         // piece is black and moves down, row+1
         if (board[row+1][col].color === 'e') {
             validMoves.push([row+1, col]);
+            // 2 square jump
+            if (piece.firstMove && board[row+2][col].color === 'e') {
+                validMoves.push([row+2, col]);
+            }
         }
         // checks if any piece can be captured
         if (col !== 0 && board[row+1][col-1].color === 'w') {
@@ -158,7 +188,31 @@ function rookMoves(row, col) {
 }
 
 // TODO: knight movements
-
+// untested
+function kinghtMoves(row, col) {
+    let piece = board[row][col];
+    let validMoves = [];
+    // all the possible places a knight could go
+    let checks = [
+        [2, 1],
+        [2, -1],
+        [-2, 1],
+        [-2, -1],
+        [1, 2],
+        [-1, 2],
+        [1, -2],
+        [-1, -2]
+    ];
+    // checks each square a knight could go
+    for (dir of checks) {
+        let curRow = row + dir[0];
+        let curCol = col + dir[1];
+        if (0 <= curRow && curRow < 8 && 0 <= curCol && curCol < 8 && board[curRow][curCol].color !== piece.color) {
+            validMoves.push([curRow, curCol]);
+        }
+    }
+    return validMoves;
+}
 
 // TODO: bishop movements
 function bishopMoves(row, col) {
@@ -174,8 +228,7 @@ function bishopMoves(row, col) {
     for (dir of diagonals) {
         let curRow = row + dir[0];
         let curCol = col + dir[1];
-        while (0 <= curRow && curRow < 8 && 0 <= curCol && curCol < 8 &&
-               board[curRow][curCol].color !== piece.color) {
+        while (0 <= curRow && curRow < 8 && 0 <= curCol && curCol < 8 && board[curRow][curCol].color !== piece.color) {
             validMoves.push([curRow, curCol]);
             if (board[curRow][curCol].color !== 'e') {break;}
             curRow += dir[0];
@@ -192,3 +245,27 @@ function queenMoves(row, col) {
 }
 
 // TODO: king movements
+// untested
+function kingMoves(row, col) {
+    let piece = board[row][col];
+    let validMoves = [];
+    let directions = [
+        [1, 1],
+        [-1, 1],
+        [1, -1],
+        [-1, -1],
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1]
+    ];
+    // checks each of the 8 surrounding squares
+    for (dir of directions) {
+        let curRow = row + dir[0];
+        let curCol = col + dir[1];
+        if (0 <= curRow && curRow < 8 && 0 <= curCol && curCol < 8 && board[curRow][curCol].color !== piece.color) {
+            validMoves.push([curRow, curCol]);
+        }
+    }
+    return validMoves;
+}
