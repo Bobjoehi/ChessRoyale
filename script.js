@@ -34,7 +34,7 @@ function startAsBlack(){
 
 function opponentMove(){
 }
-    
+
 // Start by making regular chess
 
 const PAWN = 1;
@@ -51,27 +51,29 @@ const BLACK = 'b';
 const MAX_ELIXIR = 10;
 
 
-let board = setBoard();
 // indicates whether a piece is selected
 let selected = null;
 let curPieceMoves = [];
 // indicates the current player
 let playerColor = 'w';
+let opponentColor = 'b';
 // the amount of exilir this player currently has
 let curExilir = 0;
+let gameOver = false;
+let board = setBoard();
 
 
 // initializes the starting board
 function setBoard() {
     let board = [
-        createBackRow('b'),
-        createPawnRow('b'),
+        createBackRow(opponentColor),
+        createPawnRow(opponentColor),
         createEmptyRow(),
         createEmptyRow(),
         createEmptyRow(),
         createEmptyRow(),
-        createPawnRow('w'),
-        createBackRow('w')
+        createPawnRow(playerColor),
+        createBackRow(playerColor)
     ];
     return board
 }
@@ -127,7 +129,7 @@ function createEmptyRow() {
 function pawnMoves(row, col) {
     let piece = board[row][col];
     let validMoves = [];
-    if (piece.color === 'w') {
+    if (piece.color === playerColor) {
         // piece is white and moves up, row-1
         if (board[row-1][col].color === 'e') {
             validMoves.push([row-1, col]);
@@ -137,11 +139,16 @@ function pawnMoves(row, col) {
             }
         }
         // checks if any piece can be captured
-        if (col !== 0 && board[row-1][col-1].color === 'b') {
+        if (col !== 0 && board[row-1][col-1].color === opponentColor) {
             validMoves.push([row-1, col-1]);
         }
-        if (col !== 7 && board[row-1][col+1].color === 'b') {
+        if (col !== 7 && board[row-1][col+1].color === opponentColor) {
             validMoves.push([row-1, col+1]);
+        }
+        // checks if the pawn is at the final row
+        if (row === 0) {
+            piece.id = 5;
+            // TODO: change the picture of the pawn
         }
     } else {
         // piece is black and moves down, row+1
@@ -153,13 +160,18 @@ function pawnMoves(row, col) {
             }
         }
         // checks if any piece can be captured
-        if (col !== 0 && board[row+1][col-1].color === 'w') {
+        if (col !== 0 && board[row+1][col-1].color === playerColor) {
             validMoves.push([row+1, col-1]);
         }
-        if (col !== 7 && board[row+1][col+1].color === 'w') {
+        if (col !== 7 && board[row+1][col+1].color === playerColor) {
             validMoves.push([row+1, col+1]);
         }
+        if (row === 7) {
+            piece.id = 5;
+            // TODO: change the picture of the pawn
+        }
     }
+    piece.firstMove = false;
     return validMoves;
 }
 
@@ -292,6 +304,10 @@ function rowcolToCoord(row, col) {
 
 // a square has been selected (each td's onclick event)
 function squareSelected(row, col) {
+    // nothing happens if the game is over
+    if (gameOver) {
+        return;
+    }
     if (!selected) {
         pickUpPiece(row, col);
     } else {
@@ -324,6 +340,7 @@ function pickUpPiece(row, col) {
                 curPieceMoves = kingMoves(row, col);
         // TODO: do something with list of legal moves
         // like highlight all the squares that the piece can move to
+        highlightMoves(curPieceMoves);
         }
     }
     // else you cant pick up the piece, do nothing
@@ -350,6 +367,10 @@ function movePiece(row, col) {
     // check if the input is a valid move
     for (coord of curPieceMoves) {
         if (coord[0] === row && coord[1] === col) {
+            // if the target is a king, win the game
+            if (board[row][col].id === 6) {
+                gameOver = true;
+            }
             // move is valid, move piece
             let piece = board[seleced[0]][selected[1]];
             board[row][col] = piece;
@@ -362,4 +383,15 @@ function movePiece(row, col) {
         }
     }
     // not a valid move, do nothing
+}
+
+
+// makes the move received from the other player
+function receiveMove(move) {
+
+}
+
+// sends the move made to the server
+function sendMove() {
+
 }
