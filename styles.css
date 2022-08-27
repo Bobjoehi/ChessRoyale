@@ -1,0 +1,16 @@
+.dark_square{
+    background-color: black;
+    margin: 0px;
+    padding: 50px;
+}
+
+.light_square{
+    margin: 0px;
+    padding: 50px;
+    background-color: white;
+    border: 1px solid black, ;
+}
+
+.title{
+    font-family: cursive;
+}
