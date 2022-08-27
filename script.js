@@ -171,7 +171,6 @@ function pawnMoves(row, col) {
             // TODO: change the picture of the pawn
         }
     }
-    piece.firstMove = false;
     return validMoves;
 }
 
@@ -379,6 +378,7 @@ function movePiece(row, col) {
             selected = null;
             curPieceMoves = [];
             // change piece pictures and unhighlight all squares
+            piece.firstMove = false;
             return;
         }
     }
