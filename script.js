@@ -1,7 +1,8 @@
 var ws = new WebSocket("ws://localhost:1984");
 
 function move(data){
-    ws.send("some move");
+    console.log("sending my move");
+    ws.send(data);
 }
 
 
@@ -11,14 +12,15 @@ ws.addEventListener("open", () =>{
 
 ws.addEventListener("message", m =>{
     console.log(`recived data: ${m.data}`);
-    if (m.data === "you are player 0"){
+    text = m.data + "";
+    if (text === "you are player 0"){
         startAsWhite();
     }
-    if(m.data == "you are player 1"){
+    if(text === "you are player 1"){
         startAsBlack();
     }
-    if(m.data.includes("opponent move: ")){
-        move(m.data.substring(15));
+    if(text.includes("opponent move: ")){
+        opponentMove(m.data.substring(15));
     }
 })
 
@@ -30,6 +32,6 @@ function startAsBlack(){
 
 }
 
-function move(moved){
-
+function opponentMove(){
+    
 }
