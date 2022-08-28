@@ -3,6 +3,8 @@ var ws = new WebSocket("ws://localhost:1984");
 function move(data){
     console.log("sending my move");
     ws.send(data);
+    pickUpPiece(6, 0);
+    movePiece(5, 0);
 }
 
 
@@ -25,14 +27,15 @@ ws.addEventListener("message", m =>{
 })
 
 function startAsWhite(){
-
+    //for html display purposes
 }
 
 function startAsBlack(){
-
+    //for html display purposes
 }
 
 function opponentMove(){
+    //move pieces on the client's board based on opponent moves
 }
     
 // Start by making regular chess
@@ -351,13 +354,19 @@ function movePiece(row, col) {
     for (coord of curPieceMoves) {
         if (coord[0] === row && coord[1] === col) {
             // move is valid, move piece
-            let piece = board[seleced[0]][selected[1]];
-            board[row][col] = piece;
-            board[seleced[0]][selected[1]] = {color: "e", id: 0};
-            // no piece is selected, reset info
-            selected = null;
-            curPieceMoves = [];
-            // change piece pictures and unhighlight all squares
+            // wait for server to agree
+            ws.addEventListener("message", async m =>{
+                if(m + "" === "valid move"){
+                    let piece = board[selected[0]][selected[1]];
+                    board[row][col] = piece;
+                    board[selected[0]][selected[1]] = {color: "e", id: 0};
+                    // no piece is selected, reset info
+                    selected = null;
+                    curPieceMoves = [];
+                    console.log("piece has moved");
+                    // change piece pictures and unhighlight all squares
+                }
+            })
             return;
         }
     }

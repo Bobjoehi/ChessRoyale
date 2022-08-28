@@ -13,14 +13,15 @@ wss.on("connection", ws =>{
         // once a player has joined, the waiting player starts the game as white and
         // the new player starts the games as black
         ws["partner"] = waitingPlayer;
-        ws["color"] = "b";
+        ws["color"] = BLACK;
         waitingPlayer["partner"] = ws;
-        waitingPlayer["color"] = "w";
+        waitingPlayer["color"] = WHITE;
         ws["board"] = setBoard();
         ws.partner["board"] = ws.board;
         ws.send("playing as black");
         ws.partner.send("playing as white");
         waitingPlayer = null;
+        logBoardState(ws.board)
     }
     
     //assume incoming move is in the format a, b, x, y
@@ -37,17 +38,26 @@ wss.on("connection", ws =>{
             // tell both player that ws has made a valid move
             ws.send(a + ", " + b + ", " + x + ", " + y);
             ws.partner.send(a + ", " + b + ", " + x + ", " + y);
-            board[x][y] = board[a][b];
-            board[a][b] = {color: 'e', id: 0};
+            ws.board[x][y] = ws.board[a][b];
+            ws.board[a][b] = {color: 'e', id: 0};
+            logBoardState(ws.board);
+            ws.send("valid move");
+            ws.partner.send("opponent move: " + text);
+        }else{
+            ws.send("invalid move");
         }
-        console.log(typeof(text));
-        ws.partner.send(text);
     })
 
     ws.on("close", () =>{
         console.log("client disconnected");
     })
 })
+
+function logBoardState(board){
+    for(i = 0; i < 8; i ++){
+        console.log(board[i]);
+    }
+}
 
 //====================================================
 // added functions from script.js to include board in parameters
@@ -68,23 +78,34 @@ function checkMove(startR, startC, endR, endC, color, board){
     if (piece.color === color){
         switch (piece.id) {
             case 1:
-                curPieceMoves = pawnMoves(row, col);
-                return curPieceMoves.includes([endR, endC]);
+                curPieceMoves = pawnMoves(startR, startC, board);
+                console.log(curPieceMoves);
+                return includesMove(curPieceMoves, [endR, endC]);
             case 2:
-                curPieceMoves = rookMoves(row, col);
-                return curPieceMoves.includes([endR, endC]);
+                curPieceMoves = rookMoves(startR, startC, board);
+                return includesMove(curPieceMoves, [endR, endC]);
             case 3:
-                curPieceMoves = knightMoves(row, col);
-                return curPieceMoves.includes([endR, endC]);
+                curPieceMoves = knightMoves(startR, startC, board);
+                return includesMove(curPieceMoves, [endR, endC]);
             case 4:
-                curPieceMoves = bishopMoves(row, col);
-                return curPieceMoves.includes([endR, endC]);
+                curPieceMoves = bishopMoves(startR, startC, board);
+                return includesMove(curPieceMoves, [endR, endC]);
             case 5:
-                curPieceMoves = queenMoves(row, col);
-                return curPieceMoves.includes([endR, endC]);
+                curPieceMoves = queenMoves(startR, startC, board);
+                return includesMove(curPieceMoves, [endR, endC]);
             case 6:
-                curPieceMoves = kingMoves(row, col);
-                return curPieceMoves.includes([endR, endC]);
+                curPieceMoves = kingMoves(startR, startC, board);
+                return includesMove(curPieceMoves, [endR, endC]);
+        }
+    }
+    return false;
+}
+
+function includesMove(pieceMoves, attemptMove){
+    for (const element of pieceMoves) {
+        if(element[0] == attemptMove[0] && element[1] == attemptMove[1]){
+            console.log(element[0] + ' ' + attemptMove[0] + ' ' + element[1] + ' ' + attemptMove[1]);
+            return true;
         }
     }
     return false;
@@ -216,7 +237,7 @@ function bishopMoves(row, col, board) {
 
 // TODO: queen movements
 function queenMoves(row, col, board) {
-    let validMoves = rookMoves(row, col).concat(bishopMoves(row, col));
+    let validMoves = rookMoves(row, col, board).concat(bishopMoves(row, col, board));
     return validMoves;
 }
 
@@ -243,4 +264,64 @@ function kingMoves(row, col, board) {
         }
     }
     return validMoves;
+}
+
+// initializes the starting board
+function setBoard() {
+    let board = [
+        createBackRow('b'),
+        createPawnRow('b'),
+        createEmptyRow(),
+        createEmptyRow(),
+        createEmptyRow(),
+        createEmptyRow(),
+        createPawnRow('w'),
+        createBackRow('w')
+    ];
+    return board
+}
+
+// creates the row containing backline pieces
+function createBackRow(pieceColor) {
+    let backRow = [
+        {color: pieceColor, id: 2},
+        {color: pieceColor, id: 3},
+        {color: pieceColor, id: 4},
+        {color: pieceColor, id: 5},
+        {color: pieceColor, id: 6},
+        {color: pieceColor, id: 4},
+        {color: pieceColor, id: 3},
+        {color: pieceColor, id: 2}
+    ];
+    return backRow
+}
+
+// creates a row containing only pawn pieces
+function createPawnRow(pieceColor) {
+    let pawnRow = [
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true},
+        {color: pieceColor, id: 1, firstMove: true}
+    ];
+    return pawnRow
+}
+
+// creates a row of empty squares
+function createEmptyRow() {
+    let emptyRow = [
+        {color: 'e', id: 0},
+        {color: 'e', id: 0},
+        {color: 'e', id: 0},
+        {color: 'e', id: 0},
+        {color: 'e', id: 0},
+        {color: 'e', id: 0},
+        {color: 'e', id: 0},
+        {color: 'e', id: 0},
+    ];
+    return emptyRow
 }
