@@ -8,92 +8,227 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1 class="title">Chess Royale</h1>
-    <table>
-        <tr>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
+    <img id='logo' src="chessroyale.png">
+    <table class="board">
+        <tr> <!-- 8TH RANK -->
+            <td class = "light_square" id='A8'>
+                  <div class="fill B_Rook" onclick="squareSelected(0, 0)"> </div>
+            </td>
+            <td class="dark_square" id='B8'>
+                <div class="fill B_Knight" onclick="squareSelected(0, 1)"> </div>
+            </td>
+            <td class="light_square" id='C8'>
+                <div class="fill B_Bishop" onclick="squareSelected(0, 2)"> </div>
+            </td>
+            <td class="dark_square" id='D8'>
+                <div class="fill B_Queen" onclick="squareSelected(0, 3)"> </div>
+            </td>
+            <td class="light_square" id='E8'>
+                <div class="fill B_King" onclick="squareSelected(0, 4)"> </div>
+            </td>
+            <td class="dark_square" id='F8'>
+                <div class="fill B_Bishop" onclick="squareSelected(0, 5)"> </div>
+            </td>
+            <td class="light_square" id='G8'>
+                <div class="fill B_Knight" onclick="squareSelected(0, 6)"> </div>
+            </td>
+            <td class="dark_square" id='H8'>
+                <div class="fill B_Rook" onclick="squareSelected(0, 7)"> </div>
+            </td>
         </tr>
-        <tr>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
+        <tr> <!-- 7TH RANK -->
+            <td class = "dark_square" id='A7'>
+                <div class="fill B_Pawn" onclick="squareSelected(1, 0)"> </div>
+            </td>
+            <td class="light_square" id='B7'>
+                <div class="fill B_Pawn" onclick="squareSelected(1, 1)"> </div>
+            </td>
+            <td class="dark_square" id='C7'>
+                <div class="fill B_Pawn" onclick="squareSelected(1, 2)"> </div>
+            </td>
+            <td class="light_square" id='D7'>
+                <div class="fill B_Pawn" onclick="squareSelected(1, 3)"> </div>
+            </td>
+            <td class="dark_square" id='E7'>
+                <div class="fill B_Pawn" onclick="squareSelected(1, 4)"> </div>
+            </td>
+            <td class="light_square" id='F7'>
+                <div class="fill B_Pawn" onclick="squareSelected(1, 5)"> </div>
+            </td>
+            <td class="dark_square" id='G7'>
+                <div class="fill B_Pawn" onclick="squareSelected(1, 6)"> </div>
+            </td>
+            <td class="light_square" id='H7'>
+                <div class="fill B_Pawn" onclick="squareSelected(1, 7)"> </div>
+            </td>
         </tr>
-        <tr>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
+        <tr> <!-- 6TH RANK -->
+            <td class = "light_square" id='A6'> 
+                <div class="fill" onclick="squareSelected(2, 0)"> </div>
+            </td>
+            <td class="dark_square" id='B6'>
+                <div class="fill" onclick="squareSelected(2, 1)"> </div>
+            </td>
+            <td class="light_square" id='C6'>
+                <div class="fill" onclick="squareSelected(2, 2)"> </div>
+            </td>
+            <td class="dark_square" id='D6'>
+                <div class="fill" onclick="squareSelected(2, 3)"> </div>
+            </td>
+            <td class="light_square" id='E6'>
+                <div class="fill" onclick="squareSelected(2, 4)"> </div>
+            </td>
+            <td class="dark_square" id='F6'>
+                <div class="fill" onclick="squareSelected(2, 5)"> </div>
+            </td>
+            <td class="light_square" id='G6'>
+                <div class="fill" onclick="squareSelected(2, 6)"> </div>
+            </td>
+            <td class="dark_square" id='H6'>
+                <div class="fill" onclick="squareSelected(2, 7)"> </div>
+            </td>
         </tr>
-        <tr>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
+        <tr> <!-- 5TH RANK -->
+            <td class="dark_square" id='A5'>
+                <div class="fill" onclick="squareSelected(3, 0)"> </div>
+            </td>
+            <td class="light_square" id='B5'>
+                <div class="fill" onclick="squareSelected(3, 1)"> </div>
+            </td>
+            <td class="dark_square" id='C5'>
+                <div class="fill" onclick="squareSelected(3, 2)"> </div>
+            </td>
+            <td class="light_square" id='D5'>
+                <div class="fill" onclick="squareSelected(3, 3)"> </div>
+            </td>
+            <td class="dark_square" id='E5'>
+                <div class="fill" onclick="squareSelected(3, 4)"> </div>
+            </td>
+            <td class="light_square" id='F5'>
+                <div class="fill" onclick="squareSelected(3, 5)"> </div>
+            </td>
+            <td class="dark_square" id='G5'>
+                <div class="fill" onclick="squareSelected(3, 6)"> </div>
+            </td>
+            <td class="light_square" id='H5'>
+                <div class="fill" onclick="squareSelected(3, 7)"> </div>
+            </td>
         </tr>
-        <tr>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
+        <tr> <!-- 4TH RANK -->
+            <td class="light_square" id='A4'>
+                <div class="fill" onclick="squareSelected(4, 0)"> </div>
+            </td>
+            <td class="dark_square" id='B4'>
+                <div class="fill" onclick="squareSelected(4, 1)"> </div>
+            </td>
+            <td class="light_square" id='C4'>
+                <div class="fill" onclick="squareSelected(4, 2)"> </div>
+            </td>
+            <td class="dark_square" id='D4'>
+                <div class="fill" onclick="squareSelected(4, 3)"> </div>
+            </td>
+            <td class="light_square" id='E4'>
+                <div class="fill" onclick="squareSelected(4, 4)"> </div>
+            </td>
+            <td class="dark_square" id='F4'>
+                <div class="fill" onclick="squareSelected(4, 5)"> </div>
+            </td>
+            <td class="light_square" id='G4'>
+                <div class="fill" onclick="squareSelected(4, 6)"> </div>
+            </td>
+            <td class="dark_square" id='H4'>
+                <div class="fill" onclick="squareSelected(4, 7)"> </div>
+            </td>
         </tr>
-        <tr>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
+        <tr> <!-- 3RD RANK -->
+            <td class="dark_square" id='A3'>
+                <div class="fill" onclick="squareSelected(5, 0)"> </div>
+            </td>
+            <td class="light_square" id='B3'>
+                <div class="fill" onclick="squareSelected(5, 1)"> </div>
+            </td>
+            <td class="dark_square" id='C3'>
+                <div class="fill" onclick="squareSelected(5, 2)"> </div>
+            </td>
+            <td class="light_square" id='D3'>
+                <div class="fill" onclick="squareSelected(5, 3)"> </div>
+            </td>
+            <td class="dark_square" id='E3'>
+                <div class="fill" onclick="squareSelected(5, 4)"> </div>
+            </td>
+            <td class="light_square" id='F3'>
+                <div class="fill" onclick="squareSelected(5, 5)"> </div>
+            </td>
+            <td class="dark_square" id='G3'>
+                <div class="fill" onclick="squareSelected(5, 6)"> </div>
+            </td>
+            <td class="light_square" id='H3'>
+                <div class="fill" onclick="squareSelected(5, 7)"> </div>
+            </td>
         </tr>
-        <tr>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
+        <tr> <!-- 2ND RANK -->
+            <td class="light_square" id='A2'>
+                <div class="fill W_Pawn" onclick="squareSelected(6, 0)"> </div>
+            </td>
+            <td class="dark_square" id='B2'>
+                <div class="fill W_Pawn" onclick="squareSelected(6, 1)"> </div>
+            </td>
+            <td class="light_square" id='C2'>
+                <div class="fill W_Pawn" onclick="squareSelected(6, 2)"> </div>
+            </td>
+            <td class="dark_square" id='D2'>
+                <div class="fill W_Pawn" onclick="squareSelected(6, 3)"> </div>
+            </td>
+            <td class="light_square" id='E2'>
+                <div class="fill W_Pawn" onclick="squareSelected(6, 4)"> </div>
+            </td>
+            <td class="dark_square" id='F2'>
+                <div class="fill W_Pawn" onclick="squareSelected(6, 5)"> </div>
+            </td>
+            <td class="light_square" id='G2'>
+                <div class="fill W_Pawn" onclick="squareSelected(6, 6)">  </div>
+            </td>
+            <td class="dark_square" id='H2'>
+                <div class="fill W_Pawn" onclick="squareSelected(6, 7)"> </div>
+            </td>
         </tr>
-        <tr>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
-            <td class="dark_square"></td>
-            <td class="light_square"></td>
+        <tr> <!-- 1ST RANK -->
+            <td class="dark_square" id='A1'>
+                <div class="fill W_Rook" onclick="squareSelected(7, 0)"> 
+                        
+                </div>
+            </td>
+            <td class="light_square" id='B1'>
+                <div class="fill W_Knight" onclick="squareSelected(7, 1)"> </div>
+            </td>
+            <td class="dark_square" id='C1'>
+                <div class="fill W_Bishop" onclick="squareSelected(7, 2)"> </div>
+            </td>
+            <td class="light_square" id='D1'>
+                <div class="fill W_Queen" onclick="squareSelected(7, 3)"> </div>
+            </td>
+            <td class="dark_square" id='E1'>
+                <div class="fill W_King" onclick="squareSelected(7, 4)"> </div>
+            </td>
+            <td class="light_square" id='F1'>
+                <div class="fill W_Bishop" onclick="squareSelected(7, 5)"> </div>
+            </td>
+            <td class="dark_square" id='G1'>
+                <div class="fill W_Knight" onclick="squareSelected(7, 6)"> </div>
+            </td>
+            <td class="light_square" id='H1'>
+                <div class="fill W_Rook" onclick="squareSelected(7, 7)"> </div>
+            </td>
         </tr>
 
     </table>
     <input type="button" class="move" onclick="move('move')" value="move"></input>
+    
+    <progress id='inspirationBar' value='0' max='10'> </progress>
 
+    <h1 id='inspirationAmount'> Inspiration: </h1>
+    <button onclick="timer(0)"> Start Inspiration Bar</button>
+    
     <script type="text/javascript" src="script.js"></script>
 
 </body>
