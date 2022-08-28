@@ -3,8 +3,6 @@ var ws = new WebSocket("ws://localhost:1984");
 function move(data){
     console.log("sending my move");
     ws.send(data);
-    pickUpPiece(6, 0);
-    movePiece(5, 0);
 }
 
 
@@ -38,6 +36,9 @@ function opponentMove(){
     //move pieces on the client's board based on opponent moves
 }
 
+
+
+
 // Start by making regular chess
 
 const PAWN = 1;
@@ -50,6 +51,7 @@ const EMPTY = 0;
 
 const WHITE = 'w';
 const BLACK = 'b';
+const NO_COLOR = 'e';
 
 const MAX_ELIXIR = 10;
 
@@ -58,25 +60,24 @@ const MAX_ELIXIR = 10;
 let selected = null;
 let curPieceMoves = [];
 // indicates the current player
-let playerColor = 'w';
-let opponentColor = 'b';
-// the amount of exilir this player currently has
-let curExilir = 0;
+let playerColor = WHITE;
+    let opponentColor = BLACK;
+// the amount of elixir this player currently has
+let curElixir = 0;
 let gameOver = false;
 let board = setBoard();
-
 
 // initializes the starting board
 function setBoard() {
     let board = [
-        createBackRow(opponentColor),
-        createPawnRow(opponentColor),
+        createBackRow(BLACK),
+        createPawnRow(BLACK),
         createEmptyRow(),
         createEmptyRow(),
         createEmptyRow(),
         createEmptyRow(),
-        createPawnRow(playerColor),
-        createBackRow(playerColor)
+        createPawnRow(WHITE),
+        createBackRow(WHITE)
     ];
     return board
 }
@@ -84,14 +85,14 @@ function setBoard() {
 // creates the row containing backline pieces
 function createBackRow(pieceColor) {
     let backRow = [
-        {color: pieceColor, id: 2},
-        {color: pieceColor, id: 3},
-        {color: pieceColor, id: 4},
-        {color: pieceColor, id: 5},
-        {color: pieceColor, id: 6},
-        {color: pieceColor, id: 4},
-        {color: pieceColor, id: 3},
-        {color: pieceColor, id: 2}
+        {color: pieceColor, id: ROOK},
+        {color: pieceColor, id: KNIGHT},
+        {color: pieceColor, id: BISHOP},
+        {color: pieceColor, id: QUEEN},
+        {color: pieceColor, id: KING},
+        {color: pieceColor, id: BISHOP},
+        {color: pieceColor, id: KNIGHT},
+        {color: pieceColor, id: ROOK}
     ];
     return backRow
 }
@@ -99,14 +100,14 @@ function createBackRow(pieceColor) {
 // creates a row containing only pawn pieces
 function createPawnRow(pieceColor) {
     let pawnRow = [
-        {color: pieceColor, id: 1, firstMove: true},
-        {color: pieceColor, id: 1, firstMove: true},
-        {color: pieceColor, id: 1, firstMove: true},
-        {color: pieceColor, id: 1, firstMove: true},
-        {color: pieceColor, id: 1, firstMove: true},
-        {color: pieceColor, id: 1, firstMove: true},
-        {color: pieceColor, id: 1, firstMove: true},
-        {color: pieceColor, id: 1, firstMove: true}
+        {color: pieceColor, id: PAWN, firstMove: true},
+        {color: pieceColor, id: PAWN, firstMove: true},
+        {color: pieceColor, id: PAWN, firstMove: true},
+        {color: pieceColor, id: PAWN, firstMove: true},
+        {color: pieceColor, id: PAWN, firstMove: true},
+        {color: pieceColor, id: PAWN, firstMove: true},
+        {color: pieceColor, id: PAWN, firstMove: true},
+        {color: pieceColor, id: PAWN, firstMove: true}
     ];
     return pawnRow
 }
@@ -114,30 +115,31 @@ function createPawnRow(pieceColor) {
 // creates a row of empty squares
 function createEmptyRow() {
     let emptyRow = [
-        {color: 'e', id: 0},
-        {color: 'e', id: 0},
-        {color: 'e', id: 0},
-        {color: 'e', id: 0},
-        {color: 'e', id: 0},
-        {color: 'e', id: 0},
-        {color: 'e', id: 0},
-        {color: 'e', id: 0},
+        {color: NO_COLOR, id: EMPTY},
+        {color: NO_COLOR, id: EMPTY},
+        {color: NO_COLOR, id: EMPTY},
+        {color: NO_COLOR, id: EMPTY},
+        {color: NO_COLOR, id: EMPTY},
+        {color: NO_COLOR, id: EMPTY},
+        {color: NO_COLOR, id: EMPTY},
+        {color: NO_COLOR, id: EMPTY},
     ];
     return emptyRow
 }
 
 
 // pawn movements
-// TODO: 2 square jump and en passant not implemented
+// TODO: en passant not implemented
 function pawnMoves(row, col) {
     let piece = board[row][col];
     let validMoves = [];
+    var promoted = false;
     if (piece.color === playerColor) {
         // piece is white and moves up, row-1
-        if (board[row-1][col].color === 'e') {
+        if (board[row-1][col].color === NO_COLOR) {
             validMoves.push([row-1, col]);
             // 2 square jump
-            if (piece.firstMove && board[row-2][col].color === 'e') {
+            if (piece.firstMove && board[row-2][col].color === NO_COLOR) {
                 validMoves.push([row-2, col]);
             }
         }
@@ -148,17 +150,12 @@ function pawnMoves(row, col) {
         if (col !== 7 && board[row-1][col+1].color === opponentColor) {
             validMoves.push([row-1, col+1]);
         }
-        // checks if the pawn is at the final row
-        if (row === 0) {
-            piece.id = 5;
-            // TODO: change the picture of the pawn
-        }
     } else {
         // piece is black and moves down, row+1
-        if (board[row+1][col].color === 'e') {
+        if (board[row+1][col].color === NO_COLOR) {
             validMoves.push([row+1, col]);
             // 2 square jump
-            if (piece.firstMove && board[row+2][col].color === 'e') {
+            if (piece.firstMove && board[row+2][col].color === NO_COLOR) {
                 validMoves.push([row+2, col]);
             }
         }
@@ -169,10 +166,10 @@ function pawnMoves(row, col) {
         if (col !== 7 && board[row+1][col+1].color === playerColor) {
             validMoves.push([row+1, col+1]);
         }
-        if (row === 7) {
-            piece.id = 5;
-            // TODO: change the picture of the pawn
-        }
+    }
+    if (promoted) {
+        promotion = document.getElementById (rowcolToCoord(row, col));
+        promotion.querySelector('.fill').classList.add (idToClass(piece.id, piece.color))
     }
     return validMoves;
 }
@@ -185,28 +182,28 @@ function rookMoves(row, col) {
     // check upward movement
     while (row-i >= 0 && board[row-i][col].color !== piece.color) {
         validMoves.push([row-i, col]);
-        if (board[row-i][col].color !== 'e') {break;}
+        if (board[row-i][col].color !== NO_COLOR) {break;}
         i += 1;
     }
     // check downward movement
     i = 1;
     while (row+i < 8 && board[row+i][col].color !== piece.color) {
         validMoves.push([row+i, col]);
-        if (board[row+i][col].color !== 'e') {break;}
+        if (board[row+i][col].color !== NO_COLOR) {break;}
         i += 1;
     }
     // check leftward movement
     i = 1;
     while (col-i >= 0 && board[row][col-i].color !== piece.color) {
         validMoves.push([row, col-i]);
-        if (board[row][col-i].color !== 'e') {break;}
+        if (board[row][col-i].color !== NO_COLOR) {break;}
         i += 1;
     }
     // check rightward movement
     i = 1;
     while (col+i < 8 && board[row][col+i].color !== piece.color) {
         validMoves.push([row, col+i]);
-        if (board[row][col+i].color !== 'e') {break;}
+        if (board[row][col+i].color !== NO_COLOR) {break;}
         i += 1;
     }
     return validMoves;
@@ -254,7 +251,7 @@ function bishopMoves(row, col) {
         let curCol = col + dir[1];
         while (0 <= curRow && curRow < 8 && 0 <= curCol && curCol < 8 && board[curRow][curCol].color !== piece.color) {
             validMoves.push([curRow, curCol]);
-            if (board[curRow][curCol].color !== 'e') {break;}
+            if (board[curRow][curCol].color !== NO_COLOR) {break;}
             curRow += dir[0];
             curCol += dir[1];
         }
@@ -299,7 +296,7 @@ function kingMoves(row, col) {
 // each td's id should be its board coordinate
 function rowcolToCoord(row, col) {
     let rowCoord = String(8 - row);
-    let colCoord = String.fromCharCode(97 + col);
+    let colCoord = String.fromCharCode(65 + col);
     let coord = colCoord + rowCoord;
     return coord;
 }
@@ -323,27 +320,30 @@ function pickUpPiece(row, col) {
         selected = [row, col];
         // finds possible moves based on piece type
         switch (piece.id) {
-            case 1:
+            case PAWN:
                 curPieceMoves = pawnMoves(row, col);
                 break;
-            case 2:
+            case ROOK:
                 curPieceMoves = rookMoves(row, col);
                 break;
-            case 3:
+            case KNIGHT:
                 curPieceMoves = knightMoves(row, col);
                 break;
-            case 4:
+            case BISHOP:
                 curPieceMoves = bishopMoves(row, col);
                 break;
-            case 5:
+            case QUEEN:
                 curPieceMoves = queenMoves(row, col);
                 break;
-            case 6:
+            case KING:
                 curPieceMoves = kingMoves(row, col);
-        // TODO: do something with list of legal moves
-        // like highlight all the squares that the piece can move to
-        highlightMoves(curPieceMoves);
+        
         }
+        currPieceID = rowcolToCoord(row, col);
+        currPiece = document.getElementById(currPieceID);
+        currPiece.classList.add("selected");
+        currPiece.classList.add("hovered");
+        highlightMoves(curPieceMoves);
     }
     // else you cant pick up the piece, do nothing
 }
@@ -353,7 +353,7 @@ function highlightMoves(validMoves) {
     for (coord of validMoves) {
         let squareID = rowcolToCoord(coord[0], coord[1]);
         let square = document.getElementById(squareID);
-        // idk what now
+        square.classList.add('hovered');
     }
 }
 
@@ -361,34 +361,83 @@ function highlightMoves(validMoves) {
 // should only be called if a piece is already selected
 // TODO: also must make changes to the HTML
 function movePiece(row, col) {
-    let piece = board[selected[0]][selected[1]];
     // if input is the same as the selected piece's coords, deselect piece
     if (selected[0] === row && selected[1] === col) {
         selected = null;
         curPieceMoves = [];
-    }
-    // nothing happens if there's not enough inspiration
-    if (curElixir < pieceCost(piece.id)) {
-        return;
-    }
-    // check if the input is a valid move
-    for (coord of curPieceMoves) {
-        if (coord[0] === row && coord[1] === col) {
-            // move is valid, move piece
-            // wait for server to agree
-            ws.addEventListener("message", async m =>{
-                if(m + "" === "valid move"){
-                    board[row][col] = piece;
-                    board[selected[0]][selected[1]] = {color: "e", id: 0};
-                    // no piece is selected, reset info
-                    selected = null;
-                    curPieceMoves = [];
-                    console.log("piece has moved");
-                    // change piece pictures and unhighlight all squares
-                    curElixir -= pieceCost(piece.id);
-                }
-            })
-            return;
+            const stillHovering = document.querySelectorAll('.hovered');
+	        for (const hovering of stillHovering) {
+		        hovering.classList.remove("hovered");
+		        hovering.classList.remove("selected");
+	        }
+    } else {
+         // check if the input is a valid move
+        for (coord of curPieceMoves) {
+            if (coord[0] === row && coord[1] === col) {
+                // move is valid, move piece
+                // wait for server to agree
+                ws.addEventListener("message", async m =>{
+                    if(m + "" === "valid move"){
+                        // if the target is a king, win the game
+                        if (board[row][col].id === 6) {
+                            gameOver = true;
+                            alert ("GAME OVER");
+                        }
+                        let piece = board[selected[0]][selected[1]];
+                        
+                        // nothing happens if there's not enough inspiration
+                        if (curElixir < pieceCost(piece.id)) {
+                            return;
+                        }
+                        // Putting piece in new square
+                        board[row][col] = piece;
+                        newSquare = document.getElementById(rowcolToCoord(row, col));
+
+                        // Promotion (Auto Queening)
+                        if (piece.id === PAWN) {
+                            if (piece.color === playerColor && row === 0) {
+                                piece.id = QUEEN;
+                                newSquare.querySelector('.fill').classList = 'fill ' + (idToClass(QUEEN, piece.color));
+                            } else if (piece.color != playerColor && row === 7) {
+                                piece.id = QUEEN;
+                                newSquare.querySelector('.fill').classList = 'fill ' + (idToClass(QUEEN, piece.color));
+                            } else {
+                                newSquare.querySelector('.fill').classList = 'fill ' + (idToClass(piece.id, piece.color));
+                            }
+                        } else {
+                            newSquare.querySelector('.fill').classList = 'fill ' + (idToClass(piece.id, piece.color));
+                        }
+
+                        //Empty the old square
+                        board[selected[0]][selected[1]] = {color: "e", id: 0};
+                        newEmpty = document.getElementById(rowcolToCoord(selected[0], selected[1]));
+                        newEmpty.querySelector('.fill').classList = 'fill';
+                        // subtract cost
+                        totalCost = pieceCost(piece.id);
+                        curElixir -= totalCost;
+                        // Update Inspiration progress bar
+                        progBar = document.getElementById('inspirationBar');
+                        progBar.value -= totalCost;
+                        inspAmount = document.getElementById('inspirationAmount')
+                        inspAmount.innerHTML = "Inspiration: " + progBar.value;
+                        // Send log to console
+                        console.log("piece has moved");
+                        // no piece is selected, reset info
+                        selected = null;
+                        curPieceMoves = [];
+                        piece.firstMove = false;
+                        // change piece pictures and unhighlight all squares
+                        const stillHovering = document.querySelectorAll('.hovered');
+	                    for (const hovering of stillHovering) {
+		                    hovering.classList.remove("hovered");
+		                    hovering.classList.remove("selected");
+	                    }
+                        
+                    }
+                });
+        
+                return;
+            }
         }
     }
     // not a valid move, do nothing
@@ -397,22 +446,94 @@ function movePiece(row, col) {
 // cost of moving each piece
 function pieceCost(pieceID) {
     switch (pieceID) {
-        case 1:
+        case PAWN:
             return 2;
-        case 2:
+        case ROOK:
             return 3;
-        case 3:
+        case KNIGHT:
             return 3;
-        case 4:
+        case BISHOP:
             return 4;
-        case 5:
+        case QUEEN:
             return 6;
-        case 6:
+        case KING:
             return 2;
     }
 }
 
-// makes the move received from the other player
+// Returns the class name based on the piece
+function idToClass(pieceID, color) {
+    switch(pieceID) {
+            case PAWN:
+                if (color == WHITE) {
+                    return 'W_Pawn';
+                } else {
+                    return 'B_Pawn';
+                }
+                break;
+            case ROOK:
+                if (color == WHITE) {
+                    return 'W_Rook';
+                } else {
+                    return 'B_Rook';
+                }
+                break;
+            case KNIGHT:
+                if (color == WHITE) {
+                    return 'W_Knight';
+                } else {
+                    return 'B_Knight';
+                }
+                break;
+            case BISHOP:
+                if (color == WHITE) {
+                    return 'W_Bishop';
+                } else {
+                    return 'B_Bishop';
+                }
+                break;
+            case QUEEN:
+                if (color == WHITE) {
+                    return 'W_Queen';
+                } else {
+                    return 'B_Queen';
+                }
+                break;
+            case KING:
+                if (color == WHITE) {
+                    return 'W_King';
+                } else {
+                    return 'B_King';
+                }
+        
+        }
+}
+// Updates the progress bar, once every TIME_IN_MILLISECONDS ms
+const TIME_IN_MILLISECONDS = 1000;
+
+  function timer(n) {
+    progBar = document.getElementById('inspirationBar');
+    
+    // +1 over time if < maximum inspiration
+    if (progBar.value < MAX_ELIXIR) {
+        progBar.value += 1;
+        curElixir = progBar.value;
+        inspAmount = document.getElementById('inspirationAmount')
+        inspAmount.innerHTML = "Inspiration: " + progBar.value;
+    // Caps at 10
+    } else {
+        inspAmount.innerHTML = "Inspiration: 10 (MAX)";
+    }
+    // Stops counter after game ends, always running otherwise
+    if (!gameOver) {
+        setTimeout(function() {timer(n + 1);}, TIME_IN_MILLISECONDS);
+
+    }
+    
+  }
+
+
+  // makes the move received from the other player
 function receiveMove(move) {
 
 }
