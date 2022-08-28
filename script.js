@@ -361,10 +361,15 @@ function highlightMoves(validMoves) {
 // should only be called if a piece is already selected
 // TODO: also must make changes to the HTML
 function movePiece(row, col) {
+    let piece = board[selected[0]][selected[1]];
     // if input is the same as the selected piece's coords, deselect piece
     if (selected[0] === row && selected[1] === col) {
         selected = null;
         curPieceMoves = [];
+    }
+    // nothing happens if there's not enough inspiration
+    if (curElixir < pieceCost(piece.id)) {
+        return;
     }
     // check if the input is a valid move
     for (coord of curPieceMoves) {
@@ -373,7 +378,6 @@ function movePiece(row, col) {
             // wait for server to agree
             ws.addEventListener("message", async m =>{
                 if(m + "" === "valid move"){
-                    let piece = board[selected[0]][selected[1]];
                     board[row][col] = piece;
                     board[selected[0]][selected[1]] = {color: "e", id: 0};
                     // no piece is selected, reset info
@@ -381,6 +385,7 @@ function movePiece(row, col) {
                     curPieceMoves = [];
                     console.log("piece has moved");
                     // change piece pictures and unhighlight all squares
+                    curElixir -= pieceCost(piece.id);
                 }
             })
             return;
@@ -389,6 +394,23 @@ function movePiece(row, col) {
     // not a valid move, do nothing
 }
 
+// cost of moving each piece
+function pieceCost(pieceID) {
+    switch (pieceID) {
+        case 1:
+            return 2;
+        case 2:
+            return 3;
+        case 3:
+            return 3;
+        case 4:
+            return 4;
+        case 5:
+            return 6;
+        case 6:
+            return 2;
+    }
+}
 
 // makes the move received from the other player
 function receiveMove(move) {
