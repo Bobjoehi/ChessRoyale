@@ -6,6 +6,7 @@ let waitingPlayer;
 let currWhitePlayer;
 
 const express = require("express");
+const path = require("path");
 const app = express();
 
 app.get('/', function(req, res){
@@ -13,7 +14,6 @@ app.get('/', function(req, res){
 });
 
 app.listen(port);
-
 
 wss.on("connection", ws =>{
     console.log("new client connected");
