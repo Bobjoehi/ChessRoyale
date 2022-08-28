@@ -85,14 +85,14 @@ function setBoard() {
 // creates the row containing backline pieces
 function createBackRow(pieceColor) {
     let backRow = [
-        {color: pieceColor, id: ROOK},
+        {color: pieceColor, id: ROOK, firstMove: true},
         {color: pieceColor, id: KNIGHT},
         {color: pieceColor, id: BISHOP},
         {color: pieceColor, id: QUEEN},
-        {color: pieceColor, id: KING},
+        {color: pieceColor, id: KING, firstMove: true},
         {color: pieceColor, id: BISHOP},
         {color: pieceColor, id: KNIGHT},
-        {color: pieceColor, id: ROOK}
+        {color: pieceColor, id: ROOK, firstMove: true}
     ];
     return backRow
 }
@@ -287,6 +287,29 @@ function kingMoves(row, col) {
             validMoves.push([curRow, curCol]);
         }
     }
+    // castling checks
+    validMoves = validMoves.concat(castleChecks());
+    return validMoves;
+}
+
+// castling checks
+// only for player side
+function castleChecks() {
+    let validMoves = [];
+    if (board[7][4].firstMove) {
+        // check left side castle
+        if (board[7][0].firstMove) {
+            if (board[7][1].id == 0 && board[7][2].id == 0 && board[7][3].id == 0) {
+                validMoves.push([7, 2]);
+            }
+        }
+        // check right side castle
+        if (board[7][7].firstMove) {
+            if (board[7][5].id == 0 && board[7][6].id == 0) {
+                validMoves.push([7, 6]);
+            }
+        }
+    }
     return validMoves;
 }
 
@@ -389,6 +412,22 @@ function movePiece(row, col) {
                         if (curElixir < pieceCost(piece.id)) {
                             return;
                         }
+                        
+                        // testing
+                        // check if the move is castling
+                        if (piece.id === 6 && piece.firstMove) {
+                            if ((row === 7 && col === 2) || (row === 7 && col === 6)) {
+                                if (curElixir < 5) {
+                                    // not enough inspiration for castling
+                                    return;
+                                }
+                                // else valid move
+                                movePieceCastle(row, col);
+                                return;
+                            }
+                        }
+
+
                         // Putting piece in new square
                         board[row][col] = piece;
                         newSquare = document.getElementById(rowcolToCoord(row, col));
@@ -441,6 +480,33 @@ function movePiece(row, col) {
         }
     }
     // not a valid move, do nothing
+}
+
+// castling move
+function movePieceCastle(row, col) {
+    if (col === 2) {
+        // left castle
+        board[7][2] = board[7][4];
+        board[7][4] = {color: NO_COLOR, id: EMPTY};
+        board[7][3] = board[7][0];
+        board[7][0] = {color: NO_COLOR, id: EMPTY};
+        board[7][2].firstMove = false;
+        board[7][3].firstMove = false;
+    } else {
+        // right castle
+        board[7][6] = board[7][4];
+        board[7][4] = {color: NO_COLOR, id: EMPTY};
+        board[7][5] = board[7][7];
+        board[7][7] = {color: NO_COLOR, id: EMPTY};
+        board[7][6].firstMove = false;
+        board[7][5].firstMove = false;
+    }
+    // now no piece is selected, reset info
+    selected = null;
+    curPieceMoves = [];
+    // deduct inspiration
+    curElixir -= 5;
+    // TODO: edit HTML
 }
 
 // cost of moving each piece
