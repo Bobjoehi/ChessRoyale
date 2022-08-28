@@ -1,40 +1,6 @@
 var ws = new WebSocket("ws://localhost:1984");
 
-function move(data){
-    console.log("sending my move");
-    ws.send(data);
-}
-
-
-ws.addEventListener("open", () =>{
-    console.log("connected to server");
-})
-
-ws.addEventListener("message", m =>{
-    console.log(`recived data: ${m.data}`);
-    text = m.data + "";
-    if (text === "you are player 0"){
-        startAsWhite();
-    }
-    if(text === "you are player 1"){
-        startAsBlack();
-    }
-    if(text.includes("opponent move: ")){
-        receiveMove(m.data.substring(15));
-    }
-})
-
-function startAsWhite(){
-    //for html display purposes
-}
-
-function startAsBlack(){
-    //for html display purposes
-}
-
-
 // Start by making regular chess
-
 const PAWN = 1;
 const ROOK = 2;
 const KNIGHT = 3;
@@ -54,12 +20,51 @@ const MAX_ELIXIR = 10;
 let selected = null;
 let curPieceMoves = [];
 // indicates the current player
-let playerColor = WHITE;
-    let opponentColor = BLACK;
+let playerColor;
+let opponentColor;
 // the amount of elixir this player currently has
 let curElixir = 0;
 let gameOver = false;
 let board = setBoard();
+
+
+function move(data){
+    console.log("sending my move");
+    ws.send(data);
+}
+
+
+ws.addEventListener("open", () =>{
+    console.log("connected to server");
+})
+
+ws.addEventListener("message", m =>{
+    console.log(`recived data: ${m.data}`);
+    text = m.data + "";
+    if (text === "playing as white"){
+        startAsWhite();
+    }
+    if(text === "playing as black"){
+        window.location.replace("index_black.html");
+    }
+    if(text.includes("opponent move: ")){
+        receiveMove(text.substring(15));
+    }
+})
+
+function startAsWhite(){
+    playerColor = WHITE;
+    opponentColor = BLACK;
+    timer(0);
+}
+
+function startAsBlack(){
+    playerColor = BLACK;
+    opponentColor = WHITE;
+    timer(0);
+}
+
+
 
 // initializes the starting board
 function setBoard() {
@@ -128,7 +133,7 @@ function pawnMoves(row, col) {
     let piece = board[row][col];
     let validMoves = [];
     var promoted = false;
-    if (piece.color === playerColor) {
+    if (piece.color === WHITE) {
         // piece is white and moves up, row-1
         if (board[row-1][col].color === NO_COLOR) {
             validMoves.push([row-1, col]);
@@ -301,6 +306,7 @@ function squareSelected(row, col) {
     if (gameOver) {
         return;
     }
+    console.log(playerColor);
     if (!selected) {
         pickUpPiece(row, col);
     } else {
@@ -344,6 +350,7 @@ function pickUpPiece(row, col) {
 
 // TODO: highlights all possible moves the selected piece can make on HTML
 function highlightMoves(validMoves) {
+    console.log(validMoves);
     for (coord of validMoves) {
         let squareID = rowcolToCoord(coord[0], coord[1]);
         let square = document.getElementById(squareID);
@@ -511,9 +518,9 @@ function idToClass(pieceID, color) {
 // Updates the progress bar, once every TIME_IN_MILLISECONDS ms
 const TIME_IN_MILLISECONDS = 1000;
 
-  function timer(n) {
+function timer(n) {
     progBar = document.getElementById('inspirationBar');
-    
+
     // +1 over time if < maximum inspiration
     if (progBar.value < MAX_ELIXIR) {
         progBar.value += 1;
@@ -529,8 +536,8 @@ const TIME_IN_MILLISECONDS = 1000;
         setTimeout(function() {timer(n + 1);}, TIME_IN_MILLISECONDS);
 
     }
-    
-  }
+
+}
 
 
 // makes the move received from the other player
@@ -542,9 +549,30 @@ function receiveMove(move) {
     b = parseInt(move.substring(3, 4));
     x = parseInt(move.substring(6, 7));
     y = parseInt(move.substring(9, 10));
-    board[x][y] = ws.board[a][b];
+    piece = board[a][b];
+    board[x][y] = board[a][b];
     board[a][b] = {color: 'e', id: 0};
 
+    let newSquare = document.getElementById(rowcolToCoord(x, y));
+
+    // Promotion (Auto Queening)
+    if (piece.id === PAWN) {
+        if (piece.color === WHITE && x === 0) {
+            piece.id = QUEEN;
+            newSquare.querySelector('.fill').classList = 'fill ' + (idToClass(QUEEN, WHITE));
+        } else if (piece.color === BLACK && x === 7) {
+            piece.id = QUEEN;
+            newSquare.querySelector('.fill').classList = 'fill ' + (idToClass(QUEEN, BLAcK));
+        } else {
+            newSquare.querySelector('.fill').classList = 'fill ' + (idToClass(piece.id, piece.color));
+        }
+    } else {
+        newSquare.querySelector('.fill').classList = 'fill ' + (idToClass(piece.id, piece.color));
+    }
+
+    //Empty the old square
+    newEmpty = document.getElementById(rowcolToCoord(a, b));
+    newEmpty.querySelector('.fill').classList = 'fill';
     //TODO: make changes to the html page
 }
 

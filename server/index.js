@@ -2,6 +2,7 @@ const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({port:1984});
 let waitingPlayer;
+let currWhitePlayer;
 
 wss.on("connection", ws =>{
     console.log("new client connected");
@@ -9,18 +10,21 @@ wss.on("connection", ws =>{
     //otherwise, become the waiting player
     if (waitingPlayer == null){
         waitingPlayer = ws;
-    }else{
+    }else if (currWhitePlayer == null){
         // once a player has joined, the waiting player starts the game as white and
         // the new player starts the games as black
+        currWhitePlayer = waitingPlayer;
+        ws.send("playing as black");
+    }else{
         ws["partner"] = waitingPlayer;
         ws["color"] = BLACK;
         waitingPlayer["partner"] = ws;
         waitingPlayer["color"] = WHITE;
         ws["board"] = setBoard();
         ws.partner["board"] = ws.board;
-        ws.send("playing as black");
         ws.partner.send("playing as white");
         waitingPlayer = null;
+        currWhitePlayer = null;
     }
     
     //assume incoming move is in the format a, b, x, y
@@ -33,16 +37,20 @@ wss.on("connection", ws =>{
         b = parseInt(text.substring(3, 4));
         x = parseInt(text.substring(6, 7));
         y = parseInt(text.substring(9, 10));
+        piece = ws.board[a][b];
         if (checkMove(a, b, x, y, ws.color, ws.board)){
-            // tell both player that ws has made a valid move
-            ws.send(a + ", " + b + ", " + x + ", " + y);
-            ws.partner.send(a + ", " + b + ", " + x + ", " + y);
+            if(piece.id === PAWN){
+                if(piece.color == BLACK && x == 7 || piece.color == WHITE && x == 0){
+                    piece.id = QUEEN;
+                }
+            }
             ws.board[x][y] = ws.board[a][b];
             ws.board[a][b] = {color: 'e', id: 0};
             // logBoardState(ws.board);
+            // tell both player that ws has made a valid move
             console.log("validated move");
             ws.send("valid move");
-            ws.partner.send("opponent move: " + text);
+            ws.partner.send("opponent move: " + a + ", " + b + ", " + x + ", " + y);
         }else{
             ws.send("invalid move");
         }
@@ -72,6 +80,7 @@ const EMPTY = 0;
 
 const WHITE = 'w';
 const BLACK = 'b';
+const NO_COLOR = 'e';
 
 function checkMove(startR, startC, endR, endC, color, board){
     let piece = board[startR][startC];
@@ -112,38 +121,43 @@ function includesMove(pieceMoves, attemptMove){
 function pawnMoves(row, col, board) {
     let piece = board[row][col];
     let validMoves = [];
-    if (piece.color === 'w') {
+    var promoted = false;
+    if (piece.color === WHITE) {
         // piece is white and moves up, row-1
-        if (board[row-1][col].color === 'e') {
+        if (board[row-1][col] !== undefined && board[row-1][col].color === NO_COLOR) {
             validMoves.push([row-1, col]);
             // 2 square jump
-            if (piece.firstMove && board[row-2][col].color === 'e') {
+            if (piece.firstMove && board[row-2][col].color === NO_COLOR) {
                 validMoves.push([row-2, col]);
             }
         }
         // checks if any piece can be captured
-        if (col !== 0 && board[row-1][col-1].color === 'b') {
+        if (col !== 0 && board[row-1][col-1].color === BLACK) {
             validMoves.push([row-1, col-1]);
         }
-        if (col !== 7 && board[row-1][col+1].color === 'b') {
+        if (col !== 7 && board[row-1][col+1].color === BLACK) {
             validMoves.push([row-1, col+1]);
         }
     } else {
         // piece is black and moves down, row+1
-        if (board[row+1][col].color === 'e') {
+        if (board[row+1][col] !== undefined && board[row+1][col].color === NO_COLOR) {
             validMoves.push([row+1, col]);
             // 2 square jump
-            if (piece.firstMove && board[row+2][col].color === 'e') {
+            if (piece.firstMove && board[row+2][col].color === NO_COLOR) {
                 validMoves.push([row+2, col]);
             }
         }
         // checks if any piece can be captured
-        if (col !== 0 && board[row+1][col-1].color === 'w') {
+        if (col !== 0 && board[row+1][col-1].color === WHITE) {
             validMoves.push([row+1, col-1]);
         }
-        if (col !== 7 && board[row+1][col+1].color === 'w') {
+        if (col !== 7 && board[row+1][col+1].color === WHITE) {
             validMoves.push([row+1, col+1]);
         }
+    }
+    if (promoted) {
+        promotion = document.getElementById (rowcolToCoord(row, col));
+        promotion.querySelector('.fill').classList.add (idToClass(piece.id, piece.color))
     }
     return validMoves;
 }

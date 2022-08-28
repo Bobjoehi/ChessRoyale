@@ -7,7 +7,7 @@
     <title>Chess Royale Prototype</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body onload="timer(0)">
+<body onload="startAsBlack()">
     <img id='logo' src="chessroyale.png">
     <table class="board">
         <tr> <!-- 1ST RANK -->
@@ -220,12 +220,10 @@
         </tr>
 
     </table>
-    <input type="button" class="move" onclick="move('move')" value="move"></input>
     
     <progress id='inspirationBar' value='0' max='10'> </progress>
 
     <h1 id='inspirationAmount'> Inspiration: </h1>
-    <button onclick="timer(0)"> Start Inspiration Bar</button>
     
     <script type="text/javascript" src="script.js"></script>
 
