@@ -9,11 +9,13 @@ const express = require("express");
 const path = require("path");
 const app = express();
 
+app.use(express.static(path.join(__dirname, "..")));
+
 app.get('/', function(req, res){
-    res.sendFile(path.join(__dirname, "/index.html"));
+    res.sendFile(path.join(__dirname, "..", "index.html"));
 });
 
-app.listen(port);
+app.listen(1984);
 
 wss.on("connection", ws =>{
     console.log("new client connected");
