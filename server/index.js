@@ -5,6 +5,14 @@ const wss = new WebSocket.Server({port:port});
 let waitingPlayer;
 let currWhitePlayer;
 
+const express = require("express");
+const app = express();
+
+app.get('/', function(req, res){
+    res.sendFile(path.join(__dirname, "/index.html"));
+});
+
+app.listen(port);
 
 
 wss.on("connection", ws =>{
