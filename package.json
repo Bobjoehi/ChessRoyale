@@ -2,6 +2,9 @@
   "name": "chess-royale-prototype",
   "version": "1.0.0",
   "description": "chess with elixir",
+  "dependencies" : {
+    "express" : "3.x"
+  },
   "main": "server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
