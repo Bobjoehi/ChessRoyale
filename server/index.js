@@ -1,7 +1,7 @@
 const WebSocket = require("ws");
 const port = process.env.PORT || 1984;
 
-const wss = new WebSocket.Server({port:port});
+const wss = new WebSocket.Server({port:1984});
 let waitingPlayer;
 let currWhitePlayer;
 
@@ -15,7 +15,7 @@ app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, "..", "index.html"));
 });
 
-app.listen(1984);
+app.listen(port);
 
 wss.on("connection", ws =>{
     console.log("new client connected");
