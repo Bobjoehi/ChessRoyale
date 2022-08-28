@@ -21,7 +21,6 @@ wss.on("connection", ws =>{
         ws.send("playing as black");
         ws.partner.send("playing as white");
         waitingPlayer = null;
-        logBoardState(ws.board)
     }
     
     //assume incoming move is in the format a, b, x, y
@@ -40,7 +39,8 @@ wss.on("connection", ws =>{
             ws.partner.send(a + ", " + b + ", " + x + ", " + y);
             ws.board[x][y] = ws.board[a][b];
             ws.board[a][b] = {color: 'e', id: 0};
-            logBoardState(ws.board);
+            // logBoardState(ws.board);
+            console.log("validated move");
             ws.send("valid move");
             ws.partner.send("opponent move: " + text);
         }else{
@@ -79,7 +79,6 @@ function checkMove(startR, startC, endR, endC, color, board){
         switch (piece.id) {
             case 1:
                 curPieceMoves = pawnMoves(startR, startC, board);
-                console.log(curPieceMoves);
                 return includesMove(curPieceMoves, [endR, endC]);
             case 2:
                 curPieceMoves = rookMoves(startR, startC, board);
@@ -104,7 +103,6 @@ function checkMove(startR, startC, endR, endC, color, board){
 function includesMove(pieceMoves, attemptMove){
     for (const element of pieceMoves) {
         if(element[0] == attemptMove[0] && element[1] == attemptMove[1]){
-            console.log(element[0] + ' ' + attemptMove[0] + ' ' + element[1] + ' ' + attemptMove[1]);
             return true;
         }
     }

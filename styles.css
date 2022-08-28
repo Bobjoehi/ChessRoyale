@@ -1,17 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Aboreto&display=swap');
+
 .dark_square{
-    background-color: black;
+    background-color: #00509D;
+    width: 75px;
+    height: 75px;
     margin: 0px;
-    padding: 50px;
 }
 
 .light_square{
     margin: 0px;
-    padding: 50px;
-    background-color: white;
+    background-color: #A3BEDB;
+    width: 75px;
+    height: 75px;
     border: 1px solid black, ;
 }
 
-.title{
-    font-family: cursive;
-
+#logo{
+    width:500px;
+    height:100px;
+    margin-left: 75px;
 }
+
+html, body {
+    height: 100%;
+}
+
+html {
+    display: table;
+    margin: auto;
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.board{
+    border: 10px solid black    ;
+}
+
+.B_Rook {
+    background-image: url('Pieces_Sprites/B_Rook.png');
+    background-size: 75px;
+}
+.B_Knight {
+    background-image: url('Pieces_Sprites/B_Knight.png');
+    background-size: 75px;
+}
+.B_Bishop {
+    background-image: url('Pieces_Sprites/B_Bishop.png');
+    background-size: 75px;
+}
+.B_Queen {
+    background-image: url('Pieces_Sprites/B_Queen.png');
+    background-size: 75px;
+}
+.B_King {
+    background-image: url('Pieces_Sprites/B_King.png');
+    background-size: 75px;
+}
+.B_Pawn {
+    background-image: url('Pieces_Sprites/B_Pawn.png');
+    background-size: 75px;
+}
+
+.W_Rook {
+    background-image: url('Pieces_Sprites/W_Rook.png');
+    background-size: 75px;
+}
+.W_Knight {
+    background-image: url('Pieces_Sprites/W_Knight.png');
+    background-size: 75px;
+}
+.W_Bishop {
+    background-image: url('Pieces_Sprites/W_Bishop.png');
+    background-size: 75px;
+}
+.W_Queen {
+    background-image: url('Pieces_Sprites/W_Queen.png');
+    background-size: 75px;
+}
+.W_King {
+    background-image: url('Pieces_Sprites/W_King.png');
+    background-size: 75px;
+}
+.W_Pawn {
+    background-image: url('Pieces_Sprites/W_Pawn.png');
+    background-size: 75px;
+}
+
+.fill {
+    cursor: grab;
+    height: 75px;
+    width: 75px;
+}
+
+.hovered {
+    background: #f4f4a6;
+}
+
+.selected {
+    background: #a4f4a6;
+}
+
+
+#inspirationBar {
+        width: 100%;
+        height: 5.5rem;
+        text-align: center;
+        color: white;
+        position: relative;
+        padding-top: 3px;
+}
+
+#inspirationAmount {
+    font-family: 'Aboreto', cursive;
+}
+
