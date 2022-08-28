@@ -22,7 +22,7 @@ ws.addEventListener("message", m =>{
         startAsBlack();
     }
     if(text.includes("opponent move: ")){
-        opponentMove(m.data.substring(15));
+        receiveMove(m.data.substring(15));
     }
 })
 
@@ -32,10 +32,6 @@ function startAsWhite(){
 
 function startAsBlack(){
     //for html display purposes
-}
-
-function opponentMove(){
-    //move pieces on the client's board based on opponent moves
 }
 
 // Start by making regular chess
@@ -391,6 +387,9 @@ function movePiece(row, col) {
 
 
 // makes the move received from the other player
+// move should be a string in the format 'a, b, x, y'
+//where a b are the starting coordinates of the piece and
+//x y are the ending coordinates.
 function receiveMove(move) {
 
 }
