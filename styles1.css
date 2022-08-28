@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Karantina&display=swap');
+
+.heading {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+h2 {
+    margin-top: 15px;
+    font-family: 'Karantina', cursive;
+    letter-spacing: 3px;
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+    color: #00296B;
+}
+
+.play {
+    background-color: #00296B;
+    font-family: 'Karantina', cursive;
+    border-radius: 5px;
+    margin-top: 45px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+    height: 65px;
+    color: #FDC500;
+    font-size: 35px;
+}
+
+.rules {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 470px;
+}
+
+.bkground {
+    background-color: #A3BEDB;
+    border-radius: 10px;
+    padding-top: 5px;
+    padding-bottom: 25px;
+}
+
