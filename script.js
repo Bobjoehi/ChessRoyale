@@ -1,6 +1,6 @@
-var ws = new WebSocket("wss://chess-royale-prototype.herokuapp.com");
+// var ws = new WebSocket("wss://chess-royale-prototype.herokuapp.com");
 // const port = process.env.PORT || 1984;
-// var ws = new WebSocket("ws://localhost:" + port);
+var ws = new WebSocket("wss://localhost:1984");
 
 // Start by making regular chess
 const PAWN = 1;
