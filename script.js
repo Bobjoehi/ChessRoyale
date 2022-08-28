@@ -391,10 +391,19 @@ function movePiece(row, col) {
 //where a b are the starting coordinates of the piece and
 //x y are the ending coordinates.
 function receiveMove(move) {
+    a = parseInt(move.substring(0, 1));
+    b = parseInt(move.substring(3, 4));
+    x = parseInt(move.substring(6, 7));
+    y = parseInt(move.substring(9, 10));
+    board[x][y] = ws.board[a][b];
+    board[a][b] = {color: 'e', id: 0};
 
+    //TODO: make changes to the html page
 }
 
 // sends the move made to the server
 function sendMove() {
-
+    //we need to get from the html page which piece is being picked up
+    //and where it is being moved to.
+    
 }
