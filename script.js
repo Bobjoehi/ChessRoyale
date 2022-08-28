@@ -1,4 +1,5 @@
-var ws = new WebSocket("ws://localhost:1984");
+const port = process.env.PORT || 1984;
+var ws = new WebSocket("ws://localhost:" + port);
 
 // Start by making regular chess
 const PAWN = 1;

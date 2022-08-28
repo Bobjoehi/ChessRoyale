@@ -1,6 +1,7 @@
 const WebSocket = require("ws");
+const port = process.env.PORT || 1984;
 
-const wss = new WebSocket.Server({port:1984});
+const wss = new WebSocket.Server({port:port});
 let waitingPlayer;
 let currWhitePlayer;
 
